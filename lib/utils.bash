@@ -91,7 +91,7 @@ download_release() {
       ALTARCH=amd64
   fi
 
-  url="$GH_REPO/releases/download/v${version}/okta-aws-cli_${version}_${plat}_${arch}.tar.gz"
+  url="$GH_REPO/releases/download/v${version}/okta-aws-cli_${version}_${plat}_${ALTARCH}.tar.gz"
   echo "url: ${url}"
 
 # TODO check the signature
