@@ -4,6 +4,7 @@ set -euo pipefail
 
 # TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for okta-aws-cli.
 GH_REPO="https://github.com/okta/okta-aws-cli"
+GH_REPO_URL="https://github.com/${GH_REPO}"
 TOOL_NAME="okta-aws-cli"
 TOOL_TEST="okta-aws-cli --help"
 
@@ -36,20 +37,64 @@ list_all_versions() {
   list_github_tags
 }
 
+get_architecture() {
+  architecture=$(uname -m | tr '[:upper:]' '[:lower:]')
+  case ${architecture} in
+  armv*)
+    architecture="arm"
+    ;;
+  aarch64)
+    architecture="arm64"
+    ;;
+  x86_64)
+    architecture="amd64"
+    ;;
+  *)
+    fail "Sorry, architecture ${architecture} is not supported"
+    ;;
+  esac
+  echo "${architecture}"
+}
+
+get_platform() {
+  platform=$(uname | tr '[:upper:]' '[:lower:]')
+  case ${platform} in
+  darwin)
+    platform='darwin'
+    ;;
+  linux)
+    platform='linux'
+    ;;
+  *)
+    fail "Sorry, platform ${platform} is not supported"
+    ;;
+  esac
+
+  echo "${platform}"
+}
+
 download_release() {
   local version filename url
   version="$1"
   filename="$2"
-  arch="$3"
-  os="$4"
 
-  echo "INSIDE download_release with version: ${version} filename: ${filename} arch: ${arch} os: ${os}"
+  arch="$(get_architecture)"
+  plat="$(get_platform)"
+  ALTARCH="${arch}"
+
+  echo "INSIDE download_release with version: ${version} filename: ${filename} arch: ${arch} plat: ${plat}"
 
   # TODO: Adapt the release URL convention for okta-aws-cli
-  url="$GH_REPO/releases/download/v${version}/okta-aws-cli_${version}_${os}_${arch}.tar.gz"
+
+  # Okta has changed from x86_64 to amd64 for Darwin starting from 0.3.0 (why? something I don't know?) so we need to adapt
+  if [[ "${arch}" == "x86_64" && "${ASDF_INSTALL_VERSION}" == "0.3.0" ]]; then
+      ALTARCH=amd64
+  fi
+
+  url="$GH_REPO/releases/download/v${version}/okta-aws-cli_${version}_${plat}_${arch}.tar.gz"
   echo "url: ${url}"
 
-# check the signature
+# TODO check the signature
 # https://github.com/okta/okta-aws-cli/releases/download/v0.2.1/okta-aws-cli_0.2.1_Darwin_arm64.tar.gz
 
 
@@ -64,13 +109,16 @@ download_release() {
 
   echo "About to execute curl with TOOL_NAME: ${TOOL_NAME} curl_opts: ${curl_opts} filename: ${filename} url: ${url}"
   echo "* Downloading $TOOL_NAME release $version..."
-  curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
+
+  curl "${curl_opts[@]}" -o "${filename}" -C - "${url}" || fail "Could not download $url"
+  chmod +x "${filename}"
 }
 
 install_version() {
   local install_type="$1"
   local version="$2"
   local install_path="${3%/bin}/bin"
+
   local tool_cmd
   tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
 
