@@ -107,10 +107,17 @@ download_release() {
 # okta-aws-cli_0.2.1_freebsd_x86_64.tar.gz
 # okta-aws-cli_0.2.1_Linux_arm64.tar.gz
 
+  echo "**********************************************************"
   echo "About to execute curl with TOOL_NAME: ${TOOL_NAME} curl_opts: ${curl_opts} filename: ${filename} url: ${url}"
   echo "* Downloading $TOOL_NAME release $version..."
+  echo "**********************************************************"
 
   curl "${curl_opts[@]}" -o "${filename}" -C - "${url}" || fail "Could not download $url"
+
+  echo "**********************************************************"
+  echo "about to chmod +x ${filename}"
+  ls -l ${filename}
+  echo "**********************************************************"
   chmod +x "${filename}"
 }
 
@@ -122,7 +129,9 @@ install_version() {
   local tool_cmd
   tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
 
+  echo "**********************************************************"
   echo "install_version: install_type: ${install_type} version: ${version} install_path: ${install_path}"
+  echo "**********************************************************"
 
   if [ "$install_type" != "version" ]; then
     fail "asdf-$TOOL_NAME supports release installs only"
@@ -133,6 +142,10 @@ install_version() {
   fi
 
   (
+    echo "**********************************************************"
+    echo "starting block of code"
+    set -x
+
     mkdir -p "$install_path"
     cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
     echo "making a copy of ${install_path}/${tool_cmd}_v${version} to ${install_path}/${tool_cmd}"
