@@ -117,6 +117,13 @@ download_release() {
   echo "**********************************************************"
   echo "about to chmod +x ${filename}"
   ls -l ${filename}
+  echo "THE FILE I HAVE DOWNLOADED IS ${filename}
+  cd /tmp
+  mkdir asdf-test || true
+  cd asdf-test
+  rm -rf *
+  tar zxvf ${filename}
+  ls -lR
   echo "**********************************************************"
   chmod +x "${filename}"
 }
@@ -126,8 +133,11 @@ install_version() {
   local version="$2"
   local install_path="${3%/bin}/bin"
 
+  echo "install_path: ${install_path}"
+
   local tool_cmd
   tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
+  echo "tool_cmd: ${tool_cmd}"
 
   echo "**********************************************************"
   echo "install_version: install_type: ${install_type} version: ${version} install_path: ${install_path}"
@@ -152,7 +162,7 @@ install_version() {
     cp -p "${install_path}/${tool_cmd}_v${version}" "${install_path}/${tool_cmd}"
     echo "copied ${ASDF_DOWNLOAD_PATH}/* to ${install_path}"
     echo "Listing file in ${ASDF_DOWNLOAD_PATH}/*"
-    ls -l "$ASDF_DOWNLOAD_PATH"/*
+    ls -l "${ASDF_DOWNLOAD_PATH}/*"
 
     echo "listing ${install_path}"
     ls -l ${install_path}
