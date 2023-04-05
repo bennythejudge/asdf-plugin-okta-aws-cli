@@ -117,11 +117,11 @@ download_release() {
   echo "**********************************************************"
   echo "about to chmod +x ${filename}"
   ls -l ${filename}
-  echo "THE FILE I HAVE DOWNLOADED IS ${filename}
+  echo "THE FILE I HAVE DOWNLOADED IS ${filename}"
   cd /tmp
   mkdir asdf-test || true
   cd asdf-test
-  rm -rf *
+  rm -rf ./*glob*
   tar zxvf ${filename}
   ls -lR
   echo "**********************************************************"
@@ -182,7 +182,7 @@ install_version() {
 
     echo "$TOOL_NAME $version installation was successful!"
   ) || (
-    #rm -rf "$install_path"
-    fail "An error occurred while installing $TOOL_NAME $version."
+    rm -rf "$install_path"
+    fail "An error occurred while installing $TOOL_NAME $version"
   )
 }
