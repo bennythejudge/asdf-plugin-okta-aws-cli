@@ -4,4 +4,3 @@
 shfmt --language-dialect bash --write \
 	setup.bash \
 	scripts/*.bash
-
