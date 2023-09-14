@@ -47,8 +47,8 @@ download_release() {
   ALTARCH=$(uname -m)
   ALTOS=$(uname -s)
 
-  # Okta has changed from x86_64 to amd64 for Darwin starting from 0.3.0 (why? something I don't know?) so we need to adapt
-  if [[ "${ARCH}" == "x86_64" && "${ASDF_INSTALL_VERSION}" == "0.3.0" ]]; then
+  # Okta has changed from x86_64 to amd64 from 0.3.0 (why? something I don't know?) so we need to adapt
+  if [[ "${ARCH}" == "x86_64" && ! "${ASDF_INSTALL_VERSION}" =~ ^0\.[012]\.* ]]; then
     ALTARCH=amd64
   fi
   if [[ "${OS}" == "Linux" ]]; then
