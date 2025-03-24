@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.1](https://www.github.com/bennythejudge/asdf-plugin-okta-aws-cli/compare/v1.0.0...v1.0.1) (2025-03-24)
+
+
+### Bug Fixes
+
+* Ensure the right ARCH is used for versions > 0.2.1 ([#6](https://www.github.com/bennythejudge/asdf-plugin-okta-aws-cli/issues/6)) ([98e6865](https://www.github.com/bennythejudge/asdf-plugin-okta-aws-cli/commit/98e68659331c07b96f6983ff2a4dc6ffb4d35927))
+
 ## 1.0.0 (2023-04-18)
 
 
