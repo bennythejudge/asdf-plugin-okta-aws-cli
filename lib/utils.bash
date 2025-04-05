@@ -86,7 +86,8 @@ install_version() {
   (
     mkdir -p "$install_path"
     cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
-    cp -p "${install_path}/${tool_cmd}_v${version}" "${install_path}/${tool_cmd}"
+    # This is failing in April 2025 - not sure since when nor why
+    #cp -p "${install_path}/${tool_cmd}_v${version}" "${install_path}/${tool_cmd}"
 
     # TODO: Assert okta-aws-cli executable exists.
     local tool_cmd
