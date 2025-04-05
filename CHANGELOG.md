@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/bennythejudge/asdf-plugin-okta-aws-cli/compare/v1.0.1...v1.0.2) (2025-04-05)
+
+
+### Bug Fixes
+
+* **asdf-okta-aws-cli:** Fix install ([#15](https://github.com/bennythejudge/asdf-plugin-okta-aws-cli/issues/15)) ([0725960](https://github.com/bennythejudge/asdf-plugin-okta-aws-cli/commit/072596035a5a544dd4b55c2b0e321b0853bcc3d2))
+
 ### [1.0.1](https://www.github.com/bennythejudge/asdf-plugin-okta-aws-cli/compare/v1.0.0...v1.0.1) (2025-03-24)
 
 
