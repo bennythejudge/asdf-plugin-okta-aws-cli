@@ -83,6 +83,12 @@ install_version() {
     fail "ERROR: neither ${ASDF_DOWNLOAD_PATH}/${tool_cmd}_v${version} nor ${ASDF_DOWNLOAD_PATH}/${tool_cmd} exist. After untarring the downloaded release file I cannot find the executable"
   fi
 
+  if [[ ! -f "${ASDF_DOWNLOAD_PATH}/${tool_cmd}_v${version}" && ! -f "${ASDF_DOWNLOAD_PATH}/${tool_cmd}" && ! -f "${ASDF_DOWNLOAD_PATH}/${tool_cmd}_v*" ]]; then
+    fail "ERROR: neither ${ASDF_DOWNLOAD_PATH}/${tool_cmd}_v${version}, ${ASDF_DOWNLOAD_PATH}/${tool_cmd}, nor any ${ASDF_DOWNLOAD_PATH}/${tool_cmd}_v* exist. After untarring the downloaded release file I cannot find the executable"
+  fi
+
+
+
   (
     mkdir -p "$install_path"
     cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
