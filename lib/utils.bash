@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-# TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for okta-aws-cli.
 GH_REPO="https://github.com/okta/okta-aws-cli"
 TOOL_NAME="okta-aws-cli"
 TOOL_TEST="okta-aws-cli --help"
@@ -31,38 +30,36 @@ list_github_tags() {
 }
 
 list_all_versions() {
-  # TODO: Adapt this. By default we simply list the tag names from GitHub releases.
-  # Change this function if okta-aws-cli has other means of determining installable versions.
   list_github_tags
 }
 
+# okta-aws-cli renamed its release asset labels starting with release 0.3.0:
+# OS went from "Darwin"/"Linux"/"Windows" to lowercase, and ARCH from "x86_64" to "amd64".
+# Versions 0.0.x/0.1.x/0.2.x still need the old, uname-native casing.
+release_os_arch() {
+  local version="$1" os arch
+  os=$(uname -s)
+  arch=$(uname -m)
+
+  if [[ ! "$version" =~ ^0\.[012]\. ]]; then
+    os=$(echo "$os" | tr '[:upper:]' '[:lower:]')
+    if [[ "$arch" == "x86_64" ]]; then
+      arch=amd64
+    fi
+  fi
+
+  echo "$os $arch"
+}
+
 download_release() {
-  local version filename url
+  local version filename url os arch
   version="$1"
   filename="$2"
 
-  # we must get the os/architecture.
-  ARCH=$(uname -m)
-  OS=$(uname -s)
-  ALTARCH=$(uname -m)
-  ALTOS=$(uname -s)
-
-  # Okta has changed from x86_64 to amd64 from 0.3.0 (why? something I don't know?) so we need to adapt
-  if [[ "${ARCH}" == "x86_64" && ! "${ASDF_INSTALL_VERSION}" =~ ^0\.[012]\.* ]]; then
-    ALTARCH=amd64
-  fi
-  if [[ "${OS}" == "Linux" ]]; then
-    ALTOS=linux
-  fi
-
-  arch=${ALTARCH}
-  os=${ALTOS}
-
-  # TODO: Adapt the release URL convention for okta-aws-cli
-  url="$GH_REPO/releases/download/v${version}/okta-aws-cli_${version}_${os}_${arch}.tar.gz"
+  read -r os arch <<<"$(release_os_arch "$version")"
 
   # TODO: add a check of the signature
-  # https://github.com/okta/okta-aws-cli/releases/download/v0.2.1/okta-aws-cli_0.2.1_Darwin_arm64.tar.gz
+  url="$GH_REPO/releases/download/v${version}/okta-aws-cli_${version}_${os}_${arch}.tar.gz"
 
   echo "* Downloading $TOOL_NAME release $version..."
   curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
@@ -83,21 +80,9 @@ install_version() {
     fail "ERROR: neither ${ASDF_DOWNLOAD_PATH}/${tool_cmd}_v${version} nor ${ASDF_DOWNLOAD_PATH}/${tool_cmd} exist. After untarring the downloaded release file I cannot find the executable"
   fi
 
-  if [[ ! -f "${ASDF_DOWNLOAD_PATH}/${tool_cmd}_v${version}" && ! -f "${ASDF_DOWNLOAD_PATH}/${tool_cmd}" && ! -f "${ASDF_DOWNLOAD_PATH}/${tool_cmd}_v*" ]]; then
-    fail "ERROR: neither ${ASDF_DOWNLOAD_PATH}/${tool_cmd}_v${version}, ${ASDF_DOWNLOAD_PATH}/${tool_cmd}, nor any ${ASDF_DOWNLOAD_PATH}/${tool_cmd}_v* exist. After untarring the downloaded release file I cannot find the executable"
-  fi
-
-
-
   (
     mkdir -p "$install_path"
     cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
-    # This is failing in April 2025 - not sure since when nor why
-    #cp -p "${install_path}/${tool_cmd}_v${version}" "${install_path}/${tool_cmd}"
-
-    # TODO: Assert okta-aws-cli executable exists.
-    local tool_cmd
-    tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
 
     test -x "$install_path/$tool_cmd" || fail "Expected $install_path/$tool_cmd to be executable."
 
