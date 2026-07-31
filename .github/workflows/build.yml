@@ -5,11 +5,15 @@ on:
     branches:
       - main
   pull_request:
+  schedule:
+    # Catch upstream okta-aws-cli releases that break installation before a user hits it.
+    - cron: "0 6 * * 1"
 
 jobs:
   unit_tests:
     name: bats unit tests
     runs-on: ubuntu-latest
+    if: github.event_name != 'schedule'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Install bats
