@@ -10,14 +10,14 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: asdf-vm/actions/install@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: asdf-vm/actions/install@a7acd3c0f80eb138922a2da9514d1df22864eaca # v4
       - run: scripts/lint.bash
 
   actionlint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Check workflow files
         uses: docker://rhysd/actionlint:1.6.23
         with:

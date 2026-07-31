@@ -7,6 +7,16 @@ on:
   pull_request:
 
 jobs:
+  unit_tests:
+    name: bats unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Install bats
+        run: npm install -g bats
+      - name: Run unit tests
+        run: bats test/
+
   plugin_test:
     name: asdf plugin okta-aws-cli test
     strategy:
@@ -17,6 +27,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: asdf_plugin_test
-        uses: asdf-vm/actions/plugin-test@v4
+        uses: asdf-vm/actions/plugin-test@a7acd3c0f80eb138922a2da9514d1df22864eaca # v4
         with:
           command: okta-aws-cli --version
